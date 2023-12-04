@@ -16,17 +16,18 @@
 
 package org.laolis.cms.repository;
 
+import javax.persistence.LockModeType;
+
 import org.laolis.cms.domain.Comment;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.LockModeType;
-
 @Repository
-@Transactional
+@Transactional(propagation = Propagation.REQUIRED)
 public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustom {
 
 	@EntityGraph(value = Comment.DEEP_GRAPH_NAME, type = EntityGraph.EntityGraphType.FETCH)

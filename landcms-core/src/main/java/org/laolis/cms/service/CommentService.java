@@ -78,7 +78,7 @@ public class CommentService {
 	}
 
 	public Comment updateComment(CommentUpdateRequest request, AuthorizedUser updatedBy) {
-		Comment comment = commentRepository.findOneForUpdateById(request.getId());
+		Comment comment = commentRepository.findOneById(request.getId());
 		if (comment == null) {
 			throw new ServiceException();
 		}
@@ -94,7 +94,7 @@ public class CommentService {
 	}
 
 	public Comment deleteComment(CommentDeleteRequest request, AuthorizedUser deletedBy) {
-		Comment comment = commentRepository.findOneForUpdateById(request.getId());
+		Comment comment = commentRepository.findOneById(request.getId());
 		if (comment == null) {
 			throw new ServiceException();
 		}
@@ -112,7 +112,7 @@ public class CommentService {
 
 		List<Comment> comments = new ArrayList<>();
 		for (long id : request.getIds()) {
-			Comment comment = commentRepository.findOneForUpdateById(id);
+			Comment comment = commentRepository.findOneById(id);
 			if (comment.isApproved()) {
 				continue;
 			}
@@ -135,7 +135,7 @@ public class CommentService {
 
 		List<Comment> comments = new ArrayList<>();
 		for (long id : request.getIds()) {
-			Comment comment = commentRepository.findOneForUpdateById(id);
+			Comment comment = commentRepository.findOneById(id);
 			if (!comment.isApproved()) {
 				continue;
 			}
