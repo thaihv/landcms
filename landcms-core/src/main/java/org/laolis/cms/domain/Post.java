@@ -16,31 +16,61 @@
 
 package org.laolis.cms.domain;
 
-import org.hibernate.annotations.*;
-import org.hibernate.search.annotations.*;
-import org.hibernate.search.annotations.Index;
-import org.laolis.cms.support.CustomFieldValuesBridge;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.*;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.SortNatural;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ContainedIn;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Fields;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.SortableField;
+import org.laolis.cms.support.CustomFieldValuesBridge;
 
 @Entity
 @NamedEntityGraphs({
-		@NamedEntityGraph(name = Post.SHALLOW_GRAPH_NAME,
-				attributeNodes = {
-						@NamedAttributeNode("cover"),
-						@NamedAttributeNode("author")}
-		),
-		@NamedEntityGraph(name = Post.DEEP_GRAPH_NAME,
-				attributeNodes = {
-						@NamedAttributeNode("cover"),
-						@NamedAttributeNode("author")})
-})
-@Table(name = "post", uniqueConstraints = @UniqueConstraint(columnNames = {"code", "language"}))
+		@NamedEntityGraph(name = Post.SHALLOW_GRAPH_NAME, attributeNodes = { @NamedAttributeNode("cover"),
+				@NamedAttributeNode("author") }),
+		@NamedEntityGraph(name = Post.DEEP_GRAPH_NAME, attributeNodes = { @NamedAttributeNode("cover"),
+				@NamedAttributeNode("author") }) })
+@Table(name = "post", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "language" }))
 @Inheritance(strategy = InheritanceType.JOINED)
 @DynamicInsert
 @DynamicUpdate
@@ -83,10 +113,7 @@ public class Post extends DomainObject<Long> {
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Seo seo = new Seo();
 
-	@Fields({
-			@Field,
-			@Field(name = "sortDate", analyze = Analyze.NO, index = Index.NO)
-	})
+	@Fields({ @Field, @Field(name = "sortDate", analyze = Analyze.NO, index = Index.NO) })
 	@SortableField(forField = "sortDate")
 	private LocalDateTime date;
 
@@ -110,19 +137,15 @@ public class Post extends DomainObject<Long> {
 	private String draftedCode;
 
 	@ManyToMany
-	@JoinTable(
-			name = "post_category",
-			joinColumns = {@JoinColumn(name = "post_id")},
-			inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
+	@JoinTable(name = "post_category", joinColumns = {
+			@JoinColumn(name = "post_id") }, inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id"))
 	@SortNatural
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private SortedSet<Category> categories = new TreeSet<>();
 
 	@ManyToMany
-	@JoinTable(
-			name = "post_tag",
-			joinColumns = {@JoinColumn(name = "post_id")},
-			inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+	@JoinTable(name = "post_tag", joinColumns = {
+			@JoinColumn(name = "post_id") }, inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
 	@SortNatural
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private SortedSet<Tag> tags = new TreeSet<>();
@@ -144,18 +167,17 @@ public class Post extends DomainObject<Long> {
 	@ContainedIn
 	private SortedSet<Comment> comments;
 
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private List<Rating> ratings = new ArrayList<>();
+
 	@ManyToMany
-	@JoinTable(
-			name = "post_related_post",
-			joinColumns = {@JoinColumn(name = "post_id")},
-			inverseJoinColumns = {@JoinColumn(name = "related_id")})
+	@JoinTable(name = "post_related_post", joinColumns = { @JoinColumn(name = "post_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "related_id") })
 	private Set<Post> relatedToPosts = new HashSet<>();
 
 	@ManyToMany
-	@JoinTable(
-			name = "post_related_post",
-			joinColumns = {@JoinColumn(name = "related_id")},
-			inverseJoinColumns = {@JoinColumn(name = "post_id")})
+	@JoinTable(name = "post_related_post", joinColumns = { @JoinColumn(name = "related_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "post_id") })
 	private Set<Post> relatedByPosts = new HashSet<>();
 
 	@ManyToMany
