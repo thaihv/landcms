@@ -8,6 +8,11 @@
 		<meta name="keywords" th:content="${#posts.metaKeywords(page)}" />
 		<meta name="author" content="" />
 		<title th:text="${#posts.title(page)}">Title</title>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.8.4/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.8.4/css/froala_style.min.css" rel="stylesheet" type="text/css" />
+		<link href="../css/froala_style.min.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.8.4/js/froala_editor.pkgd.min.js"></script>
+		<script> $(function() { $('textarea').froalaEditor() }); </script>
 		<!--/*/ <th:block th:replace="layout::head-link"> /*/-->
 		<link rel="alternate" type="application/atom+xml" th:title="${WEBSITE_TITLE}" th:href="@{/feed/atom.xml}" />
 		<link rel="alternate" type="application/rss+xml" th:title="${WEBSITE_TITLE}" th:href="@{/feed/rss.xml}" />
@@ -21,7 +26,7 @@
 		<!--/*/ </th:block> /*/-->
 	</head>
 	<body>
-		<div id="wrap">
+		<div class="fr-view" id="wrap">
 			<div th:replace="layout::nav"></div>
 			<img th:if="${page.cover ne null}" th:src="@{${#medias.link(page.cover)}(w=1200,h=300,m=1)}" class="post-cover" />
 			<div class="container">
